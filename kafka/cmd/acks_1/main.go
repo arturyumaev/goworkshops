@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"github.com/IBM/sarama"
 )
 
 var (
-	maxMessages = 10_000
+	maxMessages = 6_000_000
 	successes   int32
 	errors      int32
 )
 
 func main() {
 	config := sarama.NewConfig()
-	config.Producer.RequiredAcks = 1
+	config.Producer.RequiredAcks = sarama.WaitForLocal
 	config.Producer.Return.Successes = true
 
-	producer, err := sarama.NewAsyncProducer([]string{"NB-7830.local:39092"}, config)
+	producer, err := sarama.NewAsyncProducer([]string{"localhost:19092"}, config)
 	if err != nil {
 		panic(err)
 	}
@@ -50,8 +49,6 @@ func main() {
 		if i > 0 && i%100 == 0 {
 			fmt.Printf("wrote %d messages\n", i)
 		}
-
-		time.Sleep(200 * time.Millisecond)
 	}
 	go producer.AsyncClose()
 
