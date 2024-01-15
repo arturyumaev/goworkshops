@@ -1,0 +1,54 @@
+networks:
+  kafka-net:
+    name: kafka-net
+    driver: bridge
+
+services:
+  zookeeper:
+    container_name: zookeeper
+    hostname: zookeeper
+    image: docker.io/bitnami/zookeeper:3.8
+    ports:
+      - "2181:2181"
+    volumes:
+      - "./tmp:/bitnami/zookeeper"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - kafka-net
+    healthcheck:
+      test: nc -z localhost 2181 || exit 1
+      start_period: 1s
+      timeout: 5s
+      interval: 3s
+      retries: 100
+
+  kafka-1:
+    container_name: kafka-1
+    hostname: kafka-1
+    image: wurstmeister/kafka
+    networks:
+      - kafka-net
+    ports:
+      - 19092:9092
+    environment:
+      # zookeeper
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS=72000
+      # listeners
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_ADVERTISED_PORT=9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    healthcheck:
+      test: ['CMD-SHELL', 'kafka-topics.sh --bootstrap-server localhost:9092 --list']
+      start_period: 30s
+      timeout: 5s
+      interval: 3s
+      retries: 100
+    depends_on:
+      zookeeper:
+        condition: service_healthy
