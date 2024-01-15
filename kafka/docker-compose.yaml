@@ -27,6 +27,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:19092,INTERNAL://kafka1:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONFLUENT_TOPIC_REPLICATION_FACTOR: 2
     healthcheck:
       test: ['CMD-SHELL', 'kafka-topics.sh --bootstrap-server localhost:9092 --list']
       start_period: 30s
@@ -48,6 +49,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:29092,INTERNAL://kafka2:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONFLUENT_TOPIC_REPLICATION_FACTOR: 2
     healthcheck:
       test: ['CMD-SHELL', 'kafka-topics.sh --bootstrap-server localhost:9092 --list']
       start_period: 30s
@@ -69,6 +71,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:39092,INTERNAL://kafka3:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONFLUENT_TOPIC_REPLICATION_FACTOR: 2
     healthcheck:
       test: ['CMD-SHELL', 'kafka-topics.sh --bootstrap-server localhost:9092 --list']
       start_period: 30s
