@@ -2,8 +2,10 @@
 version: '3'
 
 x-jmx-exporter: &jmx_exporter
-  JMX_PROMETHEUS_JAVAAGENT_VERSION: 0.15.0
   KAFKA_OPTS: -javaagent:/etc/kafka/jmx_prometheus_javaagent-0.15.0.jar=7071:/etc/kafka/metrics/jmx-exporter-kafka.yml
+
+x-zookeeper: &zookeeper
+  KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
 services:
   zookeeper:
@@ -26,8 +28,8 @@ services:
     ports:
       - "19092:19092"
     environment:
+      <<: *zookeeper
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:19092,INTERNAL://kafka1:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
@@ -48,8 +50,8 @@ services:
     ports:
       - "59092:59092"
     environment:
+      <<: *zookeeper
       KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:59092,INTERNAL://kafka2:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
@@ -70,8 +72,8 @@ services:
     ports:
       - "39092:39092"
     environment:
+      <<: *zookeeper
       KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:39092,INTERNAL://kafka3:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
@@ -92,11 +94,8 @@ services:
     ports:
       - "49092:49092"
     environment:
-      # JMX metrics
-      <<: *jmx_exporter
-      # Broker
+      <<: [*zookeeper, *jmx_exporter]
       KAFKA_BROKER_ID: 4
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:49092,INTERNAL://kafka4:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
