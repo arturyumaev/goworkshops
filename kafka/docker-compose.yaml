@@ -1,4 +1,3 @@
-
 version: '3'
 
 x-kafka-broker-env-base: &kafka_broker_env_base
@@ -22,14 +21,17 @@ x-kafka-broker-base: &kafka_broker_base
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.2.1
+    image: zookeeper-jmx
+    hostname: zookeeper
     container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      EXTRA_ARGS: -javaagent:/etc/zookeeper/jmx_prometheus_javaagent-0.15.0.jar=7072:/etc/zookeeper/metrics/jmx-exporter-zookeeper.yml
     healthcheck:
-      test: nc -z localhost 2181 || exit 1
+      test: jps -l | grep zookeeper || exit 1
       start_period: 1s
       timeout: 5s
       interval: 3s
