@@ -10,7 +10,7 @@ x-kafka-broker-env-base: &kafka_broker_env_base
 x-kafka-broker-base: &kafka_broker_base
   image: kafka-jmx
   healthcheck:
-    test: ['CMD-SHELL', 'kafka-topics.sh --bootstrap-server localhost:9092 --list']
+    test: kafka-topics --bootstrap-server localhost:9092 --list || exit 1
     start_period: 30s
     timeout: 5s
     interval: 3s
@@ -67,21 +67,21 @@ services:
       KAFKA_BROKER_ID: 3
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:39092,INTERNAL://kafka3:9092
 
-  # prometheus:
-  #   image: prom/prometheus:v2.49.1
-  #   container_name: prometheus
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #   ports:
-  #     - 9090:9090
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./prometheus:/etc/prometheus
-  #     - ./prometheus/prom_data:/prometheus
-  #   depends_on:
-  #     kafka1:
-  #       condition: service_healthy
-  #     kafka2:
-  #       condition: service_healthy
-  #     kafka3:
-  #       condition: service_healthy
+  prometheus:
+    image: prom/prometheus:v2.49.1
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - ./prometheus/prom_data:/prometheus
+    depends_on:
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+      kafka3:
+        condition: service_healthy
