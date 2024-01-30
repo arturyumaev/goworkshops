@@ -2,10 +2,10 @@ version: '3'
 
 x-kafka-broker-env-base: &kafka_broker_env_base
   KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  # KAFKA_OPTS: -javaagent:/etc/kafka/jmx_prometheus_javaagent-0.15.0.jar=7071:/etc/kafka/metrics/jmx-exporter-kafka.yml
   KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
   KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
   KAFKA_CONFLUENT_TOPIC_REPLICATION_FACTOR: 2
+  EXTRA_ARGS: -javaagent:/etc/kafka/jmx_prometheus_javaagent-0.20.0.jar=7071:/etc/kafka/metrics/jmx-exporter-kafka.yml
 
 x-kafka-broker-base: &kafka_broker_base
   image: kafka-jmx
@@ -29,7 +29,7 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-      EXTRA_ARGS: -javaagent:/etc/zookeeper/jmx_prometheus_javaagent-0.15.0.jar=7072:/etc/zookeeper/metrics/jmx-exporter-zookeeper.yml
+      EXTRA_ARGS: -javaagent:/etc/zookeeper/jmx_prometheus_javaagent-0.20.0.jar=7072:/etc/zookeeper/metrics/jmx-exporter-zookeeper.yml
     healthcheck:
       test: jps -l | grep zookeeper || exit 1
       start_period: 1s
