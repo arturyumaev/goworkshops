@@ -85,3 +85,17 @@ services:
         condition: service_healthy
       kafka3:
         condition: service_healthy
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:10.3.1
+    restart: always
+    environment:
+      GF_INSTALL_PLUGINS: 'grafana-piechart-panel'
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    depends_on:
+      - prometheus

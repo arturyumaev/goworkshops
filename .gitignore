@@ -21,3 +21,6 @@
 go.work
 
 kafka/tmp
+kafka/grafana/data
+kafka/grafana/provisioning
+kafka/prometheus/prom_data
