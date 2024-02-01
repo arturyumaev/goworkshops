@@ -1019,7 +1019,7 @@
             "mode": "thresholds"
           },
           "custom": {},
-          "displayName": "Messages In Per Sec",
+          "displayName": "Total Messages In Range",
           "mappings": [],
           "noValue": "0",
           "thresholds": {
